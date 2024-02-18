@@ -966,8 +966,13 @@ ixgbe_if_attach_pre(if_ctx_t ctx)
 		error = 0;
 	} else if (error == IXGBE_ERR_SFP_NOT_SUPPORTED) {
 		device_printf(dev, "Unsupported SFP+ module detected!\n");
-		error = EIO;
-		goto err_pci;
+		if (!allow_unsupported_sfp) {
+			error = EIO;
+			goto err_pci;
+		}
+		else {
+			error = 0;
+		}
 	} else if (error) {
 		device_printf(dev, "Hardware initialization failed\n");
 		error = EIO;
